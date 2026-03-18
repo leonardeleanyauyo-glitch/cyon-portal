@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>CYON Dashboard</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body {
+      font-family: Arial;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      min-height: 100vh;
+      padding-top: 30px;
+      background: url("dashboard.png") no-repeat center center fixed;
+      background-size: cover;
+    }
+    .container {
+      background: rgba(255, 255, 255, 0.95);
+      padding: 30px;
+      border-radius: 10px;
+      text-align: left;
+      width: 700px;
+    }
+    h2 {
+      text-align: center;
+    }
+    .section {
+      margin-top: 20px;
+    }
+    .section h3 {
+      cursor: pointer;
+      background: #eee;
+      padding: 10px;
+      border-radius: 5px;
+      margin-bottom: 5px;
+    }
+    .section ul {
+      display: none;
+      list-style-type: disc;
+      padding-left: 20px;
+      margin-top: 5px;
+    }
+    img.excoPic {
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      margin-right: 10px;
+      vertical-align: middle;
+    }
+    .user-actions {
+      text-align: center;
+      margin-top: 30px;
+    }
+    .user-actions button {
+      padding: 10px 20px;
+      margin: 10px 0; /* vertical spacing */
+      display: block; /* stack vertically */
+      width: 60%; /* bigger click area */
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      color: white;
+      font-size: 16px;
+    }
+    #deleteAccountButton {
+      background: #FF0000;
+    }
+    #deleteAccountButton:hover {
+      background: #CC0000;
+    }
+    #changePasswordButton {
+      background: #008CBA;
+    }
+    #changePasswordButton:hover {
+      background: #006080;
+    }
+    #logoutButton {
+      background: #555555;
+    }
+    #logoutButton:hover {
+      background: #333333;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>Welcome, <span id="userName">User</span>!</h2>
+    <p><strong>Slogan:</strong> For God and for Youth… through Christ</p>
+
+    <!-- Sections -->
+    <div class="section">
+      <h3 onclick="toggleSection('matters')">Matters Arising</h3>
+      <ul id="matters">
+        <li>Example matter 1</li>
+        <li>Example matter 2</li>
+      </ul>
+    </div>
+
+    <div class="section">
+      <h3 onclick="toggleSection('minutes')">Minutes of Previous Meeting</h3>
+      <ul id="minutes">
+        <li>Example minute 1</li>
+        <li>Example minute 2</li>
+      </ul>
+    </div>
+
+    <div class="section">
+      <h3 onclick="toggleSection('excos')">Meet Your Excos</h3>
+      <ul id="excos">
+        <li><img class="excoPic" src="exco1.png" alt="Exco 1">John Doe - 080xxxxxxx</li>
+        <li><img class="excoPic" src="exco2.png" alt="Exco 2">Jane Smith - 081xxxxxxx</li>
+      </ul>
+    </div>
+
+    <div class="section">
+      <h3 onclick="toggleSection('events')">Upcoming Events</h3>
+      <ul id="events">
+        <li>Event 1 - Date</li>
+        <li>Event 2 - Date</li>
+      </ul>
+    </div>
+
+    <div class="section">
+      <h3 onclick="toggleSection('announcements')">Announcements / Notices</h3>
+      <ul id="announcements">
+        <li>Notice 1</li>
+        <li>Notice 2</li>
+      </ul>
+    </div>
+
+    <div class="section">
+      <h3 onclick="toggleSection('dues')">Dues & Contributions</h3>
+      <ul id="dues">
+        <li>Contribution 1</li>
+        <li>Contribution 2</li>
+      </ul>
+    </div>
+
+    <div class="section">
+      <h3 onclick="toggleSection('roster')">Roster / Tasks</h3>
+      <ul id="roster">
+        <li>Task 1 - Assigned Member</li>
+        <li>Task 2 - Assigned Member</li>
+      </ul>
+    </div>
+
+    <!-- User Actions at the bottom -->
+    <div class="user-actions">
+      <button id="changePasswordButton">Change Password</button>
+      <button id="deleteAccountButton">Delete Account</button>
+      <button id="logoutButton">Logout</button>
+    </div>
+  </div>
+
+  <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-database-compat.js"></script>
+
+  <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyCKqov2pX2h5dAvNUorntbbHg9ncZiqTj0",
+      authDomain: "cyon-portal.firebaseapp.com",
+      projectId: "cyon-portal",
+      databaseURL: "https://cyon-portal-default-rtdb.firebaseio.com/"
+    };
+    firebase.initializeApp(firebaseConfig);
+
+    // Check login & payment
+    firebase.auth().onAuthStateChanged(user => {
+      if (!user) {
+        alert("You must be logged in to access the dashboard.");
+        window.location.href = "index.html";
+        return;
+      }
+
+      // Show user name/email
+      const displayName = user.displayName || user.email || "User";
+      document.getElementById("userName").textContent = displayName;
+
+      if (user.email === "leonardeleanyauyo@gmail.com") return; // admin skip payment
+      firebase.database().ref('paidUsers/' + user.uid).get().then(snapshot => {
+        if (!snapshot.exists()) {
+          alert("You must pay the registration fee to access the dashboard.");
+          window.location.href = "index.html";
+        }
+      });
+    });
+
+    // Toggle sections
+    function toggleSection(id) {
+      const ul = document.getElementById(id);
+      ul.style.display = (ul.style.display === "block") ? "none" : "block";
+    }
+
+    // Change Password with re-auth
+    document.getElementById("changePasswordButton").addEventListener("click", async () => {
+      const user = firebase.auth().currentUser;
+      if (!user) { alert("No user logged in."); return; }
+
+      const newPass = prompt("Enter your new password (min 6 chars):");
+      if (!newPass || newPass.length < 6) { alert("Password too short"); return; }
+
+      try {
+        await user.updatePassword(newPass);
+        alert("Password updated successfully!");
+      } catch (err) {
+        if (err.code === "auth/requires-recent-login") {
+          const email = user.email;
+          const currentPass = prompt("Please enter your current password to confirm:");
+          if (!currentPass) { alert("Password required to continue"); return; }
+
+          const credential = firebase.auth.EmailAuthProvider.credential(email, currentPass);
+          try {
+            await user.reauthenticateWithCredential(credential);
+            await user.updatePassword(newPass);
+            alert("Password updated successfully after re-login!");
+          } catch (reauthErr) {
+            alert("Re-authentication failed: " + reauthErr.message);
+          }
+        } else {
+          alert("Error updating password: " + err.message);
+        }
+      }
+    });
+
+    // Delete Account with re-auth
+    document.getElementById("deleteAccountButton").addEventListener("click", async () => {
+      const user = firebase.auth().currentUser;
+      if (!user) { alert("No user logged in."); return; }
+      if (!confirm("Are you sure you want to permanently delete your account?")) return;
+
+      try {
+        // Attempt to delete the account
+        await user.delete(); 
+        alert("Account deleted successfully.");
+        window.location.href = "index.html"; // Redirect to login page after deletion
+      } catch (err) {
+        console.log("Error during account deletion:", err.message);
+
+        // Re-authentication is required if the session is expired
+        if (err.code === "auth/requires-recent-login") {
+          const email = user.email;
+          const currentPass = prompt("Please enter your current password to confirm deletion:");
+          if (!currentPass) { alert("Password required to continue."); return; }
+
+          const credential = firebase.auth.EmailAuthProvider.credential(email, currentPass);
+          try {
+            await user.reauthenticateWithCredential(credential);
+            await user.delete(); // Attempt to delete the account after re-authentication
+            alert("Account deleted successfully after re-login.");
+            window.location.href = "index.html"; // Redirect after deletion
+          } catch (reauthErr) {
+            alert("Re-authentication failed: " + reauthErr.message);
+          }
+        } else {
+          alert("Error deleting account: " + err.message);
+        }
+      }
+    });
+
+    // Logout
+    document.getElementById("logoutButton").addEventListener("click", () => {
+      firebase.auth().signOut().then(() => {
+        alert("Logged out successfully.");
+        window.location.href = "index.html";
+      }).catch(err => {
+        alert("Error logging out: " + err.message);
+      });
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CYON Portal</title>
+
+<style>
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background: #f8f8f8;
+  color: #222;
+}
+
+/* NAVBAR */
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  padding: 15px;
+  background: white;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+.logo {
+  font-weight: bold;
+}
+
+.menu-icon {
+  font-size: 24px;
+  cursor: pointer;
+}
+
+/* SIDE MENU */
+.menu {
+  position: fixed;
+  top: 0;
+  right: -100%;
+  width: 70%;
+  height: 100%;
+  background: white;
+  padding: 20px;
+  transition: 0.3s;
+  z-index: 20;
+}
+
+.menu a {
+  display: block;
+  padding: 15px 0;
+  text-decoration: none;
+  color: black;
+  border-bottom: 1px solid #eee;
+}
+
+.close-btn {
+  font-size: 22px;
+  text-align: right;
+  margin-bottom: 20px;
+  cursor: pointer;
+}
+
+/* HERO SECTION */
+.hero {
+  position: relative;
+  padding: 80px 20px 60px;
+  text-align: center;
+  color: white;
+  background: linear-gradient(
+    to bottom,
+    #000000 0%,
+    #1a1a1a 40%,
+    #3a3a3a 70%,
+    #f5f5f5 100%
+  );
+  opacity: 0;
+  transform: translateY(30px);
+  animation: fadeInUp 1s forwards;
+  animation-delay: 0.2s;
+}
+
+.hero h1 {
+  font-size: 32px;
+  margin-bottom: 10px;
+}
+
+.hero p {
+  font-size: 16px;
+  color: #ddd;
+  max-width: 500px;
+  margin: 0 auto 10px;
+}
+
+/* BUTTONS */
+.buttons {
+  margin-top: 20px;
+}
+
+.buttons button {
+  padding: 12px 20px;
+  margin: 5px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: 0.3s;
+}
+
+.login {
+  background: #FFD700;
+  color: black;
+}
+
+.login:hover {
+  background: #FFC107;
+}
+
+.signup {
+  background: #fff;
+  color: black;
+  border: 2px solid #FFD700;
+}
+
+.signup:hover {
+  background: #FFD700;
+  color: black;
+}
+
+/* IMAGE GALLERY - FULL WIDTH */
+.image-gallery {
+  padding: 0;
+  margin: 0;
+  background: #f5f5f5;
+}
+
+.image-gallery .images {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0;
+}
+
+.image-gallery .images img {
+  width: 100vw;
+  max-width: none;
+  height: auto;
+  object-fit: cover;
+  border-radius: 0;
+  flex: 1 1 100%;
+}
+
+/* SECTION CARDS */
+.section {
+  padding: 20px;
+}
+
+.card {
+  background: white;
+  padding: 20px;
+  margin-bottom: 15px;
+  border-radius: 10px;
+  box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+}
+
+.card h3 {
+  margin-top: 0;
+}
+
+/* FINAL TAGLINE */
+.final-tagline {
+  text-align: center;
+  padding: 40px 20px;
+  font-weight: bold;
+  font-size: 20px;
+  color: #000;
+}
+
+/* HERO ANIMATION */
+@keyframes fadeInUp {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+</style>
+</head>
+
+<body>
+
+<!-- NAVBAR -->
+<div class="navbar">
+  <div class="logo">CYON • St. Benedict</div>
+  <div class="menu-icon" onclick="toggleMenu()" id="menuBtn">☰</div>
+</div>
+
+<!-- SIDE MENU -->
+<div class="menu" id="menu">
+  <div class="close-btn" onclick="toggleMenu()">✕</div>
+  <a href="index.html">Home</a>
+  <a href="login.html">Login</a>
+  <a href="create-account.html">Sign Up</a>
+  <a href="#about">About</a>
+</div>
+
+<!-- HERO / WELCOME SECTION -->
+<div class="hero">
+  <h1>St. Benedict Catholic Church, Lokogoma</h1>
+  <p>
+    Welcome to the official website of the Catholic Youth Organization of Nigeria (CYON) at St. Benedict Catholic Church, Lokogoma.  
+    Engage with fellow youth, grow spiritually, and access exclusive church content tailored for young members.
+  </p>
+
+  <div class="buttons">
+    <button class="login" onclick="location.href='login.html'">Login</button>
+    <button class="signup" onclick="location.href='create-account.html'">Sign Up</button>
+  </div>
+</div>
+
+<!-- IMAGE GALLERY -->
+<div class="image-gallery">
+  <div class="images">
+    <img src="place1.png" alt="Image 1">
+    <img src="https://via.placeholder.com/400x300" alt="Image 2">
+    <img src="https://via.placeholder.com/400x300" alt="Image 3">
+  </div>
+</div>
+
+<!-- VISION SECTION -->
+<div class="section">
+  <div class="card">
+    <h3>Vision</h3>
+    <p>
+      "To nurture a vibrant, spiritually empowered Catholic youth community in Nigeria that lives out Christ’s teachings, fosters unity, promotes social responsibility, and inspires faith through active engagement, prayer, and service. Connecting the youth. Growing spiritually. Serving with love."
+    </p>
+  </div>
+</div>
+
+<!-- ABOUT CYON SECTION -->
+<div class="section" id="about">
+  <div class="card">
+    <h3>About CYON</h3>
+    <p>
+      CYON is the official platform of St. Benedict Catholic Church, Lokogoma,
+      created to help members stay connected, grow spiritually,
+      and access important church updates and teachings.
+    </p>
+  </div>
+
+  <div class="card">
+    <h3>Why Join?</h3>
+    <p>✔ Exclusive teachings<br>
+       ✔ Community updates<br>
+       ✔ Premium access</p>
+  </div>
+</div>
+
+<!-- FINAL BOLD TAGLINE -->
+<div class="final-tagline">
+  For God and for youth through Christ!!!
+</div>
+
+<script>
+// MENU TOGGLE
+let isOpen = false;
+
+function toggleMenu() {
+  const menu = document.getElementById("menu");
+  const btn = document.getElementById("menuBtn");
+
+  if (!isOpen) {
+    menu.style.right = "0";
+    btn.innerHTML = "✕";
+    isOpen = true;
+  } else {
+    menu.style.right = "-100%";
+    btn.innerHTML = "☰";
+    isOpen = false;
+  }
+}
+
+// Close menu on link click
+const menuLinks = document.querySelectorAll(".menu a");
+menuLinks.forEach(link => {
+  link.addEventListener("click", () => {
+    const menu = document.getElementById("menu");
+    const menuBtn = document.getElementById("menuBtn");
+    menu.style.right = "-100%";
+    menuBtn.innerHTML = "☰";
+    isOpen = false;
+  });
+});
+
+// Close menu if clicking outside
+document.addEventListener("click", function(event) {
+  const menu = document.getElementById("menu");
+  const menuBtn = document.getElementById("menuBtn");
+
+  if (isOpen && !menu.contains(event.target) && !menuBtn.contains(event.target)) {
+    menu.style.right = "-100%";
+    menuBtn.innerHTML = "☰";
+    isOpen = false;
+  }
+});
+</script>
+
+</body>
+</html>

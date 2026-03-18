@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CYON Payment</title>
+
+<!-- Firebase -->
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+
+<!-- Paystack -->
+<script src="https://js.paystack.co/v1/inline.js"></script>
+
+<style>
+html, body {
+  margin:0;
+  padding:0;
+  height:100%;
+  font-family: Arial;
+  overflow: hidden; /* prevent scroll for particles */
+}
+body {
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  background: linear-gradient(135deg,#6a11cb,#2575fc);
+  color:white;
+  position: relative;
+}
+canvas {
+  position:absolute;
+  top:0; left:0;
+  width:100%;
+  height:100%;
+  z-index:0; /* behind content */
+}
+.container {
+  position: relative; /* above canvas */
+  z-index:1;
+  text-align:center;
+  background: rgba(0,0,0,0.6);
+  padding:40px;
+  border-radius:12px;
+  max-width:400px;
+  width:90%;
+}
+h2 {
+  font-size:24px;
+  margin-bottom:10px;
+}
+p {
+  font-size:16px;
+  margin-bottom:20px;
+}
+button {
+  padding:12px 20px;
+  background:#FFD700;
+  border:none;
+  border-radius:6px;
+  font-weight:bold;
+  cursor:pointer;
+}
+button:hover {
+  background:#FFC107;
+}
+button:disabled {
+  background:#ccc;
+  cursor:not-allowed;
+}
+</style>
+</head>
+<body>
+
+<canvas id="bgCanvas"></canvas>
+
+<div class="container">
+  <h2>Complete Payment</h2>
+  <p>To access CYON dashboard</p>
+  <button id="payBtn" disabled>Pay Now</button>
+</div>
+
+<script>
+// Firebase config
+const firebaseConfig = {
+  apiKey: "AIzaSyCKqov2pX2h5dAvNUorntbbHg9ncZiqTj0",
+  authDomain: "cyon-portal.firebaseapp.com",
+  projectId: "cyon-portal",
+  storageBucket: "cyon-portal.firebasestorage.app",
+  messagingSenderId: "1014389012339",
+  appId: "1:1014389012339:web:003af7f9776e33d1667706"
+};
+firebase.initializeApp(firebaseConfig);
+const auth = firebase.auth();
+const db = firebase.firestore();
+
+// ---------- Animated Pearls ----------
+const canvas = document.getElementById("bgCanvas");
+const ctx = canvas.getContext("2d");
+let width = canvas.width = window.innerWidth;
+let height = canvas.height = window.innerHeight;
+
+window.addEventListener("resize", () => {
+  width = canvas.width = window.innerWidth;
+  height = canvas.height = window.innerHeight;
+});
+
+// create particles
+const particles = [];
+const particleCount = 60;
+
+for(let i=0; i<particleCount; i++){
+  particles.push({
+    x: Math.random()*width,
+    y: Math.random()*height,
+    r: Math.random()*3+1,
+    dx: (Math.random()-0.5)*0.5,
+    dy: (Math.random()-0.5)*0.5
+  });
+}
+
+function animate(){
+  ctx.clearRect(0,0,width,height);
+  particles.forEach(p => {
+    ctx.beginPath();
+    ctx.arc(p.x, p.y, p.r, 0, Math.PI*2);
+    ctx.fillStyle = "rgba(255,255,255,0.8)";
+    ctx.fill();
+    p.x += p.dx;
+    p.y += p.dy;
+
+    // wrap around screen edges
+    if(p.x > width) p.x = 0;
+    if(p.x < 0) p.x = width;
+    if(p.y > height) p.y = 0;
+    if(p.y < 0) p.y = height;
+  });
+  requestAnimationFrame(animate);
+}
+animate();
+
+// ---------- Paystack Integration ----------
+auth.onAuthStateChanged(user => {
+  if(!user){
+    window.location.href = "login.html";
+    return;
+  }
+  if(user.email === "leonardeleanyauyo@gmail.com"){
+    window.location.href = "dashboard.html";
+    return;
+  }
+
+  const payBtn = document.getElementById('payBtn');
+  payBtn.disabled = false;
+
+  payBtn.addEventListener('click', function(){
+    let handler = PaystackPop.setup({
+      key: 'pk_test_a2a6756d0488fa823f6f5a273b224bcdfe8011a2',
+      email: user.email,
+      amount: 50000,
+      currency: "NGN",
+      ref: '' + Math.floor((Math.random() * 1000000000)+1),
+
+      callback: function(response){
+        db.collection("users").doc(user.uid).set({
+          email: user.email,
+          paid: true
+        }).then(()=> window.location.href="dashboard.html")
+        .catch(err => alert("Error saving payment: "+err.message));
+      },
+
+      onClose: function(){
+        alert("Payment cancelled. You cannot access dashboard without payment.");
+      }
+    });
+    handler.openIframe();
+  });
+});
+</script>
+
+</body>
+</html>
